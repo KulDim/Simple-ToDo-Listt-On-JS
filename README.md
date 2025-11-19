@@ -1,1 +1,1 @@
-# Simple-ToDo-Listt-On-JS
+# Simple-ToDo-List-On-JS

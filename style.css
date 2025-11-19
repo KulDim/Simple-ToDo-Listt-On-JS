@@ -1,0 +1,105 @@
+*{
+    padding: 0;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+body{
+    background: #F7F7F7;
+}
+
+main{
+    width: 750px;
+    margin: 0 auto;
+}
+
+main h1{
+    font-size: 26px;
+    font-weight: 600;
+    text-align: center;
+    padding-top: 40px;
+    padding-bottom: 18px;
+}
+
+.todo{
+    width: 750px;
+}
+
+.search{
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.search input{
+    width: 100%;
+    padding: 8px 16px;
+    border: 1px solid #6C63FF;
+    border-radius: 5px;
+    background: #F7F7F7;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.search input::placeholder{
+    color: #C3C1E5;
+}
+
+.search select{
+    padding: 10px;
+    background: #5850DD;
+    border: 1px solid #6C63FF;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #F7F7F7;
+    text-transform: uppercase;
+}
+
+.search select option {
+    text-transform: capitalize;
+    color: #F7F7F7;
+    padding: 10px;
+    font-size: 12px;
+    border: 1px solid #6C63FF;
+    background: #5850DD;
+    border-radius: 5px;
+}
+
+
+.search img{
+    position: relative;
+    left: -30px;
+    cursor: pointer;
+}
+
+
+.items{
+    width: 100%;
+    margin: 0 auto;
+    width: 100%;
+    padding: 10px 0;
+
+}
+
+.item{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #5850DD;
+    padding: 10px 0;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+button{
+    padding: 10px;
+    background: #5850DD;
+    border: 1px solid #6C63FF;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #F7F7F7; 
+    cursor: pointer;  
+}
