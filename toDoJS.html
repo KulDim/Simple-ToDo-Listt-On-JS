@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo-List</title>
+    <link rel="stylesheet" href="toDoJS.css">
+</head>
+<body>
+    <main>
+        <div class="bgModal" id="itemModal">
+            <div class="itemModal">
+                <h1>NEW NOTE</h1>
+                <input type="text" name="note" placeholder="Input your note...">
+                <div class="controlerModal">
+                    <button id="cancel">CANCEL</button>
+                    <button id="apply">APPLY</button>
+                </div>
+            </div>
+        </div>
+        <h1>TODO LIST</h1>
+        <div class="search">
+            <input type="text" name="note" id="search" placeholder="Search note...">
+            <img src="Vector.svg" alt="">
+            <select name="" id="searchMode">
+                <option value="all">All</option>
+                <option value="complete">Complete</option>
+                <option value="incomplete">Incomplete</option>
+            </select>
+            <button class="add" id="add">ADD</button>
+        </div>
+        <div class="todo">
+            <div class="items" id="list">
+            </div>
+        </div>
+    </main>
+    <script src="toDoJS.js"></script>
+</body>
+</html>
