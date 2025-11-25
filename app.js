@@ -1,151 +1,157 @@
-const $list = document.querySelector("#list")
-const $add = document.querySelector("#add")
-const $modal = document.querySelector("#itemModal")
+class ToDo{
+    searchMode = "all"
+    search = ""
 
-const list = [
-    {id: 0, note: "hello", checked: false, edit: false},
-    {id: 1, note: "hello 2", checked: true, edit: false},
-    {id: 2, note: "hello 3", checked: true, edit: false},
-]
+    list = [
+        {id: 0, node: "test", checkbox: false, edit: false},
+        {id: 1, node: "test 1", checkbox: false, edit: false},
+        {id: 2, node: "test 2", checkbox: false, edit: false},
+        {id: 3, node: "test 3", checkbox: false, edit: false}
+    ]
 
-
-function renderList(){
-    $list.innerHTML = ""
-    list.map((item) => {
-        $list.innerHTML += `                
-            <div class="item" data-id="${item.id}">
-                <label for="item_${item.id}">
-                    <input class="checkbox" type="checkbox" id="item_${item.id}" name="item_${item.id}" value="true" ${item.checked ? "checked" : ""}>
-                    <span class="checkbox" ${item.checked ? "style='text-decoration: line-through'" : ""}>${item.note}</span>
-                </label>
-                <div class="controler">
-                    <button id="edit">edit</button>
-                    <button id="dell">dell</button>
-                </div>
-            </div>`
-    })
-}
-
-function renderListById(id){
+    constructor(element){
+        this.todo = element
+        this.#createInputSearch(this.todo)
+        this.containerList = this.#createList(this.todo)
+        this.#renderList(this.containerList, this.list)
+        
+        // this.#renderList(this.list, this.todo)  
+    }
     
-    for(item of list){
-        if(item.id === id){
-            const itemToDo = document.querySelector(`[data-id="${id}"]`);
-            if(item.edit === true){
+    #createInputSearch(element){
+        const container = document.createElement("div")
+        container.className = "search"
 
-                itemToDo.innerHTML = `                
-                    <label for="item_${item.id}">
-                        <input type="text" name="note" value="${item.note}" id="inputNote">
-                    </label>
-                    <div class="controler">
-                        <button id="save">save</button>
-                        <button id="dell">dell</button>
-                    </div>`
-            }else{
+        const input = document.createElement("input")
+        input.name = "search"
+        input.id = "search"
+        input.type = "text"
+        input.addEventListener(("keyup"), (e) => {
+            this.search = e.target.value            
+        })
 
-                itemToDo.innerHTML = `                
-                    <label for="item_${item.id}">
-                        <input class="checkbox" type="checkbox" id="item_${item.id}" name="item_${item.id}" value="true" ${item.checked ? "checked" : ""}>
-                        <span class="checkbox" ${item.checked ? "style='text-decoration: line-through'" : ""}>${item.note}</span>
-                    </label>
-                    <div class="controler">
-                        <button id="edit">edit</button>
-                        <button id="dell">dell</button>
-                    </div>`
+        const select = document.createElement("select")
+        select.id = "searchMode"
+
+        const options = ["all", "complete", "incomplete"]
+        options.forEach((item) => {
+            const option = document.createElement("option")
+            option.value = item
+            option.textContent = item
+            select.appendChild(option);
+        })
+        select.addEventListener("change", (e) => {
+            this.searchMode = e.target.value            
+        })
+
+        container.appendChild(input);
+        container.appendChild(select);
+        element.append(container)
+    }
+
+    #createList(todo){
+        const container = document.createElement("div")
+        container.className = "list"
+        container.addEventListener("click", this.#controlerList.bind(this))
+        todo.append(container)
+        return container
+    }
+
+    #renderList(containerList, list){
+        containerList.innerHTML = ""
+        list.forEach(items => {
+            const item = document.createElement("div")
+            item.className = "item"
+            item.id = items.id
+            
+            const containerNote = document.createElement("div")
+            containerNote.className = "containerNote"
+
+            const checkbox = document.createElement("input")
+            checkbox.type = "checkbox"
+            checkbox.className = "checkbox"
+
+            if(items.checkbox){
+                checkbox.checked = true
             }
 
-            return
-        }
-    }
-}
-
-$list.addEventListener("click", (e) => {
-    const itemElement = e.target.closest('.item');
-    if (!itemElement) return;
-
-    if(e.target.id == "inputNote") return
-    
-    
-    const itemId = parseInt(itemElement.dataset.id);
-    const item = list.find(i => i.id === itemId);
-    
-    if (!item) return;
-
-    const className = e.target.className
-    const id = e.target.id
-
-    
-    if(className == "item" || className == "checkbox"){
-        item.checked = !item.checked
-    }
-    
-    if(id == "dell"){
-        removeItemByIdMutable(list, itemId);
-        renderList()
-        return
-    }
-    
-    if(id == "edit"){
-        item.edit = true
-    }
-
-    if(id == "save"){
-        item.edit = false
-        item.note = itemElement.querySelector("#inputNote").value
-    }
-
-    
-
-    renderListById(itemId)
-})
-
-$add.addEventListener("click", (e) => {
-    $modal.style.display = "block"
-})
-
-$modal.querySelector("[name='note']").addEventListener('keydown', (e) => {
-    const input = $modal.querySelector("[name='note']")
-
-    if (e.key === 'Enter') {
-        addTodoInput(input)
-    }
-})
-
-$modal.addEventListener("click", (e) => {
-    const input = $modal.querySelector("[name='note']")
-
-    if(e.target.id == "itemModal" || e.target.id == "cancel"){
-        $modal.style.display = "none"
-    }
-
-    if(e.target.id == "apply"){
-        addTodoInput(input)
-    }
-})
+            containerNote.append(checkbox)
 
 
-function addTodoInput(input){
-        if(input.value == 0){
-            input.placeholder = "Enter the value...";
-            return
-        }
-        list.push({
-            id: list.length,
-            note: input.value,
-            checked: false
+
+            let edit = "div"
+            if(items.edit){
+                edit = "input"
+
+            }
+            const note = document.createElement(edit)
+            if(items.edit){
+                note.value = items.node
+            }
+            note.className = "note"
+            note.textContent = items.node
+            containerNote.append(note)
+
+
+            const containerControler = document.createElement("div")
+            containerControler.className = "containerControler"
+
+
+            const buttonEdit = document.createElement("button")
+            if(items.edit){
+                buttonEdit.textContent = "Save"
+                buttonEdit.className = "save"
+            }else{
+                buttonEdit.textContent = "Edit"
+                buttonEdit.className = "edit"
+                
+            }
+
+            const buttonDell = document.createElement("button")
+            buttonDell.textContent = "Dell"
+            buttonDell.className = "dell"
+            
+            item.append(containerNote)
+
+            containerControler.append(buttonEdit)
+            containerControler.append(buttonDell)
+            item.append(containerControler)
+            containerList.append(item)
         })
-        $modal.style.display = "none"
-        input.placeholder = "Input your note...";
-        input.value = ""
-        renderList()
-}
-
-function removeItemByIdMutable(arr, id) {
-    const index = arr.findIndex(item => item.id === id);
-    if (index !== -1) {
-        arr.splice(index, 1);
+        
     }
-    return arr;
+
+    #controlerList(e){
+        const itemElement = e.target.closest('.item')
+        const itemClassName = e.target.className
+
+        const itemId = parseInt(itemElement.id);        
+        const item = this.list.find(i => i.id === itemId)        
+        
+        if(itemClassName == "checkbox"){
+            item.checkbox = !item.checkbox
+        }
+        if(itemClassName == "dell"){
+            const index = this.list.findIndex(item => item.id === itemId);
+            if (index !== -1) {
+                this.list.splice(index, 1);
+            }
+            this.#renderList(this.containerList, this.list)
+        }
+        if(itemClassName == "edit"){
+            item.edit = true
+            this.#renderList(this.containerList, this.list)
+        }
+        if(itemClassName == "save"){
+            item.edit = false
+            item.node = itemElement.querySelector(".note").value
+            this.#renderList(this.containerList, this.list)            
+        }
+
+    }
+
+
 }
 
-renderList()
+
+new ToDo(document.querySelector("#toDo"))
