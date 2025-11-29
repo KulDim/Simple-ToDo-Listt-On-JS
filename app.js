@@ -1,15 +1,14 @@
 class ToDo{
     searchMode = "all"
     search = ""
-
-    list = [
-        {id: 0, note: "test", checkbox: false, edit: false},
-        {id: 1, note: "test 1", checkbox: false, edit: false},
-        {id: 2, note: "test 2", checkbox: false, edit: false},
-        {id: 3, note: "test 3", checkbox: false, edit: false}
-    ]
-
+    list = []
     constructor(element){
+        this.storage = localStorage.getItem("list")
+
+        if(this.storage){
+            this.list = JSON.parse(this.storage);
+        }
+
         this.todo = element
         this.#createInputSearch(this.todo)
         this.#createInputAdd(this.todo)
@@ -31,9 +30,7 @@ class ToDo{
         buttonAdd.addEventListener("click", (e) => {
             if(!input.value) return
 
-            const id = this.list.length > 0 ? Math.max(...this.list.map(item => item.id)) + 1 : 1;
-            console.log(id);
-            
+            const id = this.list.length > 0 ? Math.max(...this.list.map(item => item.id)) + 1 : 1;            
             
             this.list.unshift({
                 id: id,
@@ -42,7 +39,8 @@ class ToDo{
                 edit: false
             });
             input.value = ""
-            this.#renderList(this.containerList, this.list)                    
+            this.#renderList(this.containerList, this.list)
+            localStorage.setItem("list", JSON.stringify(this.list))                    
         })
 
 
@@ -73,7 +71,13 @@ class ToDo{
         })
 
         select.addEventListener("change", (e) => {
-            this.searchMode = e.target.value            
+            this.searchMode = e.target.value
+            const fakeEvent = {
+                target: input,
+                type: 'change'
+            }
+            this.#controlerSearch(fakeEvent)
+                    
         })
 
         container.appendChild(input);
@@ -103,8 +107,10 @@ class ToDo{
             checkbox.type = "checkbox"
             checkbox.className = "checkbox"
 
-            if(items.checkbox){
+            if(items.checked){
                 checkbox.checked = true
+            }else{
+                checkbox.checked = false
             }
 
             containerNote.append(checkbox)
@@ -112,7 +118,6 @@ class ToDo{
             let edit = "div"
             if(items.edit){
                 edit = "input"
-
             }
 
             const note = document.createElement(edit)
@@ -149,7 +154,6 @@ class ToDo{
             item.append(containerControler)
             containerList.append(item)
         })
-        
     }
 
     #controlerList(e){
@@ -160,7 +164,7 @@ class ToDo{
         const item = this.list.find(i => i.id === itemId)        
         
         if(itemClassName == "checkbox"){
-            item.checkbox = !item.checkbox
+            item.checked = !item.checked
         }
         if(itemClassName == "dell"){
             const index = this.list.findIndex(item => item.id === itemId);
@@ -178,21 +182,29 @@ class ToDo{
             item.note = itemElement.querySelector(".note").value
             this.#renderList(this.containerList, this.list)            
         }
-
+        localStorage.setItem("list", JSON.stringify(this.list))  
     }
 
-    #controlerSearch(e){
-        this.search = e.target.value
+    #controlerSearch(e) {
+        this.search = e.target.value;
         const searchText = this.search.toLowerCase();
-    
-        const filteredList = this.list.filter(item =>             
+        
+        const listItems = this.list.filter(item => {
+            if (this.searchMode === "complete") {
+                return item.checked
+            } else if (this.searchMode === "incomplete") {
+                return !item.checked
+            } else {
+                return true
+            }
+        })
+
+        const filteredList = listItems.filter(item => 
             item.note.toLowerCase().includes(searchText)
-        );
-
-        this.#renderList(this.containerList, filteredList)            
+        )
+        
+        this.#renderList(this.containerList, filteredList)
     }
-
-
 }
 
 
